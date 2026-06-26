@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Квиз по истории России</title>
+<meta name="description" content="Интерактивный квиз для подготовки к экзамену по истории России: Древняя Русь, Российская империя, СССР. 234 вопроса с разбором тем.">
+<meta name="theme-color" content="#0f1419">
+<meta name="author" content="">
+<!-- Open Graph (красивая ссылка в мессенджерах/соцсетях) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="📜 Квиз по истории России">
+<meta property="og:description" content="234 вопроса для подготовки к экзамену: Древняя Русь, Империя, СССР. Ошибся — тема раскроется.">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary">
+<!-- Иконка во вкладке (эмодзи-свиток, без отдельного файла) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+  :root{
+    --bg:#0f1419;
+    --panel:#1a2230;
+    --panel-2:#232d3f;
+    --accent:#c9a86a;
+    --accent-2:#e0c690;
+    --text:#e8ecf2;
+    --muted:#9aa6b8;
+    --green:#3fae6b;
+    --green-bg:#16361f;
+    --red:#d65a5a;
+    --red-bg:#3a1c1c;
+    --border:#2f3a4d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
+    background:linear-gradient(160deg,#0f1419,#131b27);
+    color:var(--text);
+    min-height:100vh;
+    line-height:1.55;
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:780px;margin:0 auto}
+  header.top{
+    text-align:center;
+    margin-bottom:28px;
+  }
+  header.top h1{
+    font-size:30px;
+    letter-spacing:.5px;
+    color:var(--accent-2);
+    font-weight:700;
+  }
+  header.top p{color:var(--muted);margin-top:6px;font-size:15px}
+
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px;
+    box-shadow:0 12px 30px rgba(0,0,0,.35);
+  }
+
+  /* ----- Меню тем ----- */
+  .sem-title{
+    color:var(--accent);
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    margin:22px 0 12px;
+    border-bottom:1px solid var(--border);
+    padding-bottom:6px;
+  }
+  .sem-title:first-child{margin-top:0}
+  .topic-btn{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    width:100%;
+    text-align:left;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:14px 16px;
+    border-radius:12px;
+    margin-bottom:10px;
+    cursor:pointer;
+    font-size:15.5px;
+    transition:.15s;
+  }
+  .topic-btn:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .topic-num{
+    flex:0 0 34px;
+    height:34px;
+    border-radius:9px;
+    background:var(--accent);
+    color:#1a1206;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;
+  }
+  .topic-btn .meta{margin-left:auto;color:var(--muted);font-size:13px;white-space:nowrap}
+  .all-btn{
+    margin-top:18px;
+    width:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#1a1206;
+    font-weight:700;
+    border:none;
+    padding:15px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+  }
+  .all-btn:hover{filter:brightness(1.05)}
+
+  /* ----- Квиз ----- */
+  .quiz-head{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+  .back{
+    background:none;border:1px solid var(--border);color:var(--muted);
+    border-radius:8px;padding:6px 12px;cursor:pointer;font-size:13px
+  }
+  .back:hover{color:var(--text);border-color:var(--accent)}
+  .quiz-topic{font-size:14px;color:var(--accent);flex:1}
+  .progress-wrap{margin:14px 0 20px}
+  .progress-bar{height:8px;background:var(--panel-2);border-radius:6px;overflow:hidden}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:.3s}
+  .progress-text{font-size:13px;color:var(--muted);margin-top:6px;display:flex;justify-content:space-between}
+
+  .question{font-size:19px;font-weight:600;margin-bottom:20px}
+  .options{display:flex;flex-direction:column;gap:11px}
+  .opt{
+    text-align:left;
+    background:var(--panel-2);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    padding:14px 16px;
+    border-radius:11px;
+    cursor:pointer;
+    font-size:15.5px;
+    transition:.12s;
+    display:flex;gap:12px;align-items:center;
+  }
+  .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opt:disabled{cursor:default}
+  .opt .letter{
+    flex:0 0 26px;height:26px;border-radius:7px;
+    background:#2c3850;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--muted)
+  }
+  .opt.correct{background:var(--green-bg);border-color:var(--green)}
+  .opt.correct .letter{background:var(--green);color:#06210f}
+  .opt.wrong{background:var(--red-bg);border-color:var(--red)}
+  .opt.wrong .letter{background:var(--red);color:#2a0c0c}
+
+  .explain{
+    margin-top:20px;
+    border-radius:12px;
+    padding:16px 18px;
+    border-left:4px solid var(--accent);
+    background:var(--panel-2);
+    display:none;
+    animation:fade .3s;
+  }
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+  .explain.show{display:block}
+  .explain .tag{
+    font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:8px;
+  }
+  .explain.ok{border-color:var(--green)}
+  .explain.ok .tag{color:var(--green)}
+  .explain.no{border-color:var(--red)}
+  .explain.no .tag{color:var(--red)}
+  .explain p{font-size:15px;color:var(--text)}
+  .explain .reveal-title{color:var(--accent-2);font-weight:700;margin-bottom:4px}
+
+  .next-btn{
+    margin-top:18px;
+    width:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    color:#1a1206;font-weight:700;border:none;
+    padding:14px;border-radius:11px;cursor:pointer;font-size:16px;
+    display:none;
+  }
+  .next-btn.show{display:block}
+  .next-btn:hover{filter:brightness(1.05)}
+
+  /* ----- Результат ----- */
+  .result{text-align:center}
+  .result .score{font-size:54px;font-weight:800;color:var(--accent-2);margin:10px 0}
+  .result .grade{font-size:20px;margin-bottom:8px}
+  .result .sub{color:var(--muted);margin-bottom:24px}
+  .result .wrong-list{text-align:left;margin:20px 0}
+  .result .wrong-list h3{font-size:15px;color:var(--accent);margin-bottom:10px}
+  .result .wrong-item{
+    background:var(--panel-2);border-left:3px solid var(--red);
+    padding:10px 14px;border-radius:9px;margin-bottom:9px;font-size:14px;color:var(--muted)
+  }
+  .result .wrong-item b{color:var(--text);display:block;margin-bottom:3px}
+  .btn-row{display:flex;gap:10px;margin-top:18px}
+  .btn-row button{
+    flex:1;border:none;padding:13px;border-radius:11px;cursor:pointer;font-weight:700;font-size:15px
+  }
+  .btn-retry{background:var(--accent);color:#1a1206}
+  .btn-menu{background:var(--panel-2);color:var(--text);border:1px solid var(--border)!important}
+  .share-btn{
+    margin-top:10px;width:100%;background:transparent;border:1px solid var(--border);
+    color:var(--muted);padding:12px;border-radius:11px;cursor:pointer;font-size:14px;font-weight:600;transition:.15s
+  }
+  .share-btn:hover{border-color:var(--accent);color:var(--text)}
+  #toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--accent);color:#1a1206;padding:12px 20px;border-radius:10px;font-weight:700;
+    font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:.25s;z-index:100
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  footer.foot{text-align:center;color:var(--muted);font-size:12.5px;margin-top:30px;opacity:.7}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>📜 Квиз по истории России</h1>
+    <p>Древняя Русь · Империя · СССР. Ошибся — тема раскроется.</p>
+  </header>
+
+  <!-- МЕНЮ -->
+  <div id="menu" class="card"></div>
+
+  <!-- КВИЗ -->
+  <div id="quiz" class="card hidden">
+    <div class="quiz-head">
+      <button class="back" onclick="goMenu()">← Темы</button>
+      <span class="quiz-topic" id="quizTopic"></span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-text">
+        <span id="progressText"></span>
+        <span id="scoreText"></span>
+      </div>
+    </div>
+    <div class="question" id="questionText"></div>
+    <div class="options" id="options"></div>
+    <div class="explain" id="explain">
+      <div class="tag" id="explainTag"></div>
+      <div class="reveal-title" id="revealTitle"></div>
+      <p id="explainText"></p>
+    </div>
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">Далее →</button>
+  </div>
+
+  <!-- РЕЗУЛЬТАТ -->
+  <div id="result" class="card result hidden"></div>
+
+  <footer class="foot">Тренажёр для подготовки к экзамену · <span id="qcount"></span> вопросов</footer>
+</div>
+
+<script src="questions.js"></script>
+<script>
+let activeQuestions = [];
+let activeTitle = "";
+let idx = 0;
+let score = 0;
+let answered = false;
+let wrongLog = [];
+
+const menuEl = document.getElementById('menu');
+const quizEl = document.getElementById('quiz');
+const resultEl = document.getElementById('result');
+
+function buildMenu(){
+  let html = "";
+  const semLabels = {1:'Семестр 1', 2:'Семестр 2', 3:'Дополнительно (§67–100): Советский период'};
+  [1,2,3].forEach(sem=>{
+    html += `<div class="sem-title">${semLabels[sem]}</div>`;
+    let n=0;
+    TOPICS.filter(t=>t.sem===sem).forEach(t=>{
+      n++;
+      html += `<button class="topic-btn" onclick="startTopic('${t.id}')">
+        <span class="topic-num">${n}</span>
+        <span>${t.title}</span>
+        <span class="meta">${t.questions.length} вопр.</span>
+      </button>`;
+    });
+  });
+  html += `<button class="all-btn" onclick="startAll()">🎲 Пройти всё подряд (${totalQuestions()} вопросов)</button>`;
+  menuEl.innerHTML = html;
+}
+function totalQuestions(){return TOPICS.reduce((s,t)=>s+t.questions.length,0)}
+
+function shuffle(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+
+function startTopic(id){
+  const t = TOPICS.find(x=>x.id===id);
+  activeTitle = t.title;
+  activeQuestions = prepare(t.questions);
+  launch();
+}
+function startAll(){
+  activeTitle = "Все темы (все разделы)";
+  let all=[];
+  TOPICS.forEach(t=>{ t.questions.forEach(q=>all.push({...q,_topic:t.title})) });
+  activeQuestions = prepare(shuffle(all));
+  launch();
+}
+
+// перемешиваем варианты ответов внутри каждого вопроса
+function prepare(qs){
+  return qs.map(q=>{
+    const optsWithIdx = q.options.map((o,i)=>({o,correct:i===q.correct}));
+    const sh = shuffle(optsWithIdx);
+    return {
+      ...q,
+      options: sh.map(x=>x.o),
+      correct: sh.findIndex(x=>x.correct)
+    };
+  });
+}
+
+function launch(){
+  idx=0;score=0;wrongLog=[];
+  menuEl.classList.add('hidden');
+  resultEl.classList.add('hidden');
+  quizEl.classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false;
+  const q = activeQuestions[idx];
+  document.getElementById('quizTopic').textContent = q._topic ? q._topic : activeTitle;
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('progressText').textContent = `Вопрос ${idx+1} из ${activeQuestions.length}`;
+  document.getElementById('scoreText').textContent = `Очки: ${score}`;
+  document.getElementById('progressFill').style.width = (idx/activeQuestions.length*100)+'%';
+
+  const letters=['А','Б','В','Г','Д'];
+  const optsEl = document.getElementById('options');
+  optsEl.innerHTML='';
+  q.options.forEach((opt,i)=>{
+    const b=document.createElement('button');
+    b.className='opt';
+    b.innerHTML=`<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+    b.onclick=()=>selectAnswer(i);
+    optsEl.appendChild(b);
+  });
+
+  document.getElementById('explain').className='explain';
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(i){
+  if(answered)return;
+  answered=true;
+  const q=activeQuestions[idx];
+  const buttons=document.querySelectorAll('.opt');
+  buttons.forEach((b,bi)=>{
+    b.disabled=true;
+    if(bi===q.correct)b.classList.add('correct');
+    if(bi===i && i!==q.correct)b.classList.add('wrong');
+  });
+
+  const ex=document.getElementById('explain');
+  const tag=document.getElementById('explainTag');
+  const revealTitle=document.getElementById('revealTitle');
+  const txt=document.getElementById('explainText');
+
+  if(i===q.correct){
+    score++;
+    ex.className='explain show ok';
+    tag.textContent='✓ Верно!';
+    revealTitle.textContent='';
+    txt.textContent=q.explain;
+  }else{
+    ex.className='explain show no';
+    tag.textContent='✗ Неверно — раскрываем тему';
+    revealTitle.textContent='Правильный ответ: '+q.options[q.correct];
+    txt.textContent=q.explain;
+    wrongLog.push({q:q.q, answer:q.options[q.correct], explain:q.explain});
+  }
+  document.getElementById('scoreText').textContent=`Очки: ${score}`;
+  document.getElementById('nextBtn').classList.add('show');
+  document.getElementById('nextBtn').textContent = (idx===activeQuestions.length-1)?'Показать результат →':'Далее →';
+}
+
+function nextQuestion(){
+  idx++;
+  if(idx>=activeQuestions.length){showResult();return}
+  renderQuestion();
+}
+
+function showResult(){
+  quizEl.classList.add('hidden');
+  resultEl.classList.remove('hidden');
+  const total=activeQuestions.length;
+  const pct=Math.round(score/total*100);
+  let grade, emoji;
+  if(pct>=90){grade='Отлично! Материал освоен';emoji='🏆'}
+  else if(pct>=70){grade='Хорошо, но есть пробелы';emoji='👍'}
+  else if(pct>=50){grade='Удовлетворительно — стоит повторить';emoji='📖'}
+  else{grade='Нужно изучить тему заново';emoji='💪'}
+
+  let html=`<div style="font-size:46px">${emoji}</div>
+    <div class="score">${score} / ${total}</div>
+    <div class="grade">${grade}</div>
+    <div class="sub">Правильных ответов: ${pct}%</div>`;
+
+  if(wrongLog.length){
+    html+=`<div class="wrong-list"><h3>📌 Что повторить (${wrongLog.length}):</h3>`;
+    wrongLog.forEach(w=>{
+      html+=`<div class="wrong-item"><b>${w.q}</b>Ответ: ${w.answer}<br>${w.explain}</div>`;
+    });
+    html+=`</div>`;
+  }else{
+    html+=`<div class="sub" style="color:var(--green)">Ни одной ошибки — великолепно!</div>`;
+  }
+
+  html+=`<div class="btn-row">
+    <button class="btn-retry" onclick="retry()">↻ Ещё раз</button>
+    <button class="btn-menu" onclick="goMenu()">☰ К темам</button>
+  </div>
+  <button class="share-btn" onclick="shareResult(${score},${total})">🔗 Поделиться результатом</button>`;
+  resultEl.innerHTML=html;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function shareResult(s,t){
+  const text=`📜 Квиз по истории России: ${s}/${t} правильных! Проверь себя:`;
+  const url=location.href.split('#')[0];
+  try{
+    if(navigator.share){ await navigator.share({title:'Квиз по истории России',text,url}); return; }
+    await navigator.clipboard.writeText(text+' '+url);
+    toast('Ссылка скопирована в буфер обмена');
+  }catch(e){ /* пользователь закрыл диалог — ничего не делаем */ }
+}
+
+function toast(msg){
+  let el=document.getElementById('toast');
+  if(!el){el=document.createElement('div');el.id='toast';document.body.appendChild(el);}
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+function retry(){
+  activeQuestions=prepare(activeQuestions);
+  launch();
+}
+function goMenu(){
+  quizEl.classList.add('hidden');
+  resultEl.classList.add('hidden');
+  menuEl.classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+buildMenu();
+document.getElementById('qcount').textContent = totalQuestions();
+</script>
+</body>
+</html>
