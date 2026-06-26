@@ -1,0 +1,28 @@
+# Конфиг для Apache-хостинга (reg.ru / ISPmanager)
+
+# index.html открывается по корню сайта
+DirectoryIndex index.html
+
+# Кодировка по умолчанию — UTF-8 (чтобы кириллица не «ломалась»)
+AddDefaultCharset UTF-8
+
+# Правильные MIME-типы
+AddType application/manifest+json .webmanifest
+AddType application/javascript    .js
+AddType image/svg+xml             .svg
+
+# Кэширование: html и база вопросов — без кэша (обновления видны сразу),
+# остальная статика — надолго
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "questions\.js$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# Сжатие текстовых файлов (быстрее загрузка)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/manifest+json image/svg+xml
+</IfModule>
